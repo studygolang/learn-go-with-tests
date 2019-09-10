@@ -6,7 +6,7 @@ The product owner wants us to expand the functionality of our command line appli
 
 ## Just enough information on poker
 
-You wont need to know much about poker, only that at certain time intervals all the players need to be informed of a steadily increasing "blind" value. 
+You won't need to know much about poker, only that at certain time intervals all the players need to be informed of a steadily increasing "blind" value. 
 
 Our application will help keep track of when the blind should go up, and how much it should be.
 
@@ -141,7 +141,7 @@ And then add it to the constructor
 func NewCLI(store PlayerStore, in io.Reader, alerter BlindAlerter) *CLI
 ```
 
-Your other tests will now fail as they dont have a `BlindAlerter` passed in to `NewCLI`. 
+Your other tests will now fail as they don't have a `BlindAlerter` passed in to `NewCLI`. 
 
 Spying on BlindAlerter is not relevant for the other tests so in the test file add
 
@@ -371,7 +371,7 @@ Implement `assertScheduledAlert` yourself.
 
 We've spent a fair amount of time here writing tests and have been somewhat naughty not integrating with our application. Let's address that before we pile on any more requirements.
 
-Try running the app and it wont compile, complaining about not enough args to `NewCLI`.
+Try running the app and it won't compile, complaining about not enough args to `NewCLI`.
 
 Let's create an implementation of `BlindAlerter` that we can use in our application.
 
@@ -419,7 +419,7 @@ Before running you might want to change the `blindTime` increment in `CLI` to be
 
 You should see it print the blind values as we'd expect every 10 seconds. Notice how you can still type `Shaun wins` into the CLI and it will stop the program how we'd expect.
 
-The game wont always be played with 5 people so we need to prompt the user to enter a number of players before the game starts. 
+The game won't always be played with 5 people so we need to prompt the user to enter a number of players before the game starts. 
 
 ## Write the test first
 
@@ -448,7 +448,7 @@ t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
     want := "Please enter the number of players: "
 
     if got != want {
-        t.Errorf("got '%s', want '%s'", got, want)
+        t.Errorf("got %q, want %q", got, want)
     }
 })
 ```
@@ -471,7 +471,7 @@ We have a new dependency so we'll have to update `NewCLI`
 func NewCLI(store PlayerStore, in io.Reader, out io.Writer, alerter BlindAlerter) *CLI
 ```
 
-Now the _other_ tests will fail to compile because they dont have an `io.Writer` being passed into `NewCLI`. 
+Now the _other_ tests will fail to compile because they don't have an `io.Writer` being passed into `NewCLI`. 
 
 Add `dummyStdout` for the other tests.
 
@@ -546,7 +546,7 @@ t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
     want := poker.PlayerPrompt
 
     if got != want {
-        t.Errorf("got '%s', want '%s'", got, want)
+        t.Errorf("got %q, want %q", got, want)
     }
 
     cases := []scheduledAlert{
@@ -891,7 +891,7 @@ Here is an example of one of the tests being fixed; try and do the rest yourself
 		wantPrompt := poker.PlayerPrompt
 
 		if gotPrompt != wantPrompt {
-			t.Errorf("got '%s', want '%s'", gotPrompt, wantPrompt)
+			t.Errorf("got %q, want %q", gotPrompt, wantPrompt)
 		}
 
 		if game.StartCalledWith != 7 {
@@ -958,7 +958,7 @@ gotPrompt := stdout.String()
 wantPrompt := poker.PlayerPrompt + "you're so silly"
 
 if gotPrompt != wantPrompt {
-    t.Errorf("got '%s', want '%s'", gotPrompt, wantPrompt)
+    t.Errorf("got %q, want %q", gotPrompt, wantPrompt)
 }
 ```
 
@@ -1005,7 +1005,7 @@ func assertMessagesSentToUser(t *testing.T, stdout *bytes.Buffer, messages ...st
 	want := strings.Join(messages, "")
 	got := stdout.String()
 	if got != want {
-		t.Errorf("got '%s' sent to stdout but expected %+v", got, messages)
+		t.Errorf("got %q sent to stdout but expected %+v", got, messages)
 	}
 }
 ```

@@ -2,7 +2,7 @@
 
 Software often kicks off long-running, resource-intensive processes (often in goroutines). If the action that caused this gets cancelled or fails for some reason you need to stop these processes in a consistent way through your application. 
 
-If you dont manage this your snappy Go application that you're so proud of could start having difficult to debug performance problems.  
+If you don't manage this your snappy Go application that you're so proud of could start having difficult to debug performance problems.  
 
 In this chapter we'll use the package `context` to help us manage long-running processes.
 
@@ -56,7 +56,7 @@ func TestHandler(t *testing.T) {
 }
 ```
 
-Now that we have a happy path, we want to make a more realistic scenario where the `Store` cant finish a`Fetch` before the user cancels the request.
+Now that we have a happy path, we want to make a more realistic scenario where the `Store` can't finish a`Fetch` before the user cancels the request.
 
 ## Write the test first
 
@@ -110,7 +110,7 @@ t.Run("tells store to cancel work if request is cancelled", func(t *testing.T) {
   })
 ```
 
-From the google blog again
+From the [Go Blog: Context](https://blog.golang.org/context)
 
 > The context package provides functions to derive new Context values from existing ones. These values form a tree: when a Context is canceled, all Contexts derived from it are also canceled.
 
@@ -149,8 +149,8 @@ We'll need to update our happy path test to assert that it does not get cancelle
 
 ```go
 t.Run("returns data from store", func(t *testing.T) {
-    store := SpyStore{response: data}
-    svr := Server(&store)
+    store := &SpyStore{response: data}
+    svr := Server(store)
 
     request := httptest.NewRequest(http.MethodGet, "/", nil)
     response := httptest.NewRecorder()
@@ -267,7 +267,7 @@ One of the main points of `context` is that it is a consistent way of offering c
 
 > Incoming requests to a server should create a Context, and outgoing calls to servers should accept a Context. The chain of function calls between them must propagate the Context, optionally replacing it with a derived Context created using WithCancel, WithDeadline, WithTimeout, or WithValue. When a Context is canceled, all Contexts derived from it are also canceled.
 
-From the Google blog again:
+From the [Go Blog: Context](https://blog.golang.org/context) again:
 
 > At Google, we require that Go programmers pass a Context parameter as the first argument to every function on the call path between incoming and outgoing requests. This allows Go code developed by many different teams to interoperate well. It provides simple control over timeouts and cancelation and ensures that critical values like security credentials transit Go programs properly.
 
@@ -341,8 +341,6 @@ It's similar to our approach from before, we use Go's concurrency primitives to 
 
 You'll take a similar approach when writing your own functions and methods that accept a `context` so make sure you understand what's going on.
 
-We removed the reference to `ctx` from the `SpyStore`'s fields because it's no longer interesting to us. We're strictly testing behaviour now which we prefer over testing implementation details such as "you passed through a particular value to function `foo`".
-
 Finally we can update our tests. Comment out our cancellation test so we can fix the happy path test first.
 
 ```go
@@ -358,10 +356,6 @@ t.Run("returns data from store", func(t *testing.T) {
     if response.Body.String() != data {
         t.Errorf(`got "%s", want "%s"`, response.Body.String(), data)
     }
-
-    if store.ctx != request.Context() {
-        t.Errorf("store was not passed through a context %v", store.ctx)
-    }
 })
 ```
 
@@ -372,7 +366,6 @@ t.Run("returns data from store", func(t *testing.T) {
 --- FAIL: TestServer (0.00s)
     --- FAIL: TestServer/returns_data_from_store (0.00s)
     	context_test.go:22: got "", want "hello, world"
-    	context_test.go:26: store was not passed through a context <nil>
 ```
 
 ## Write enough code to make it pass

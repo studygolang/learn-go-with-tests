@@ -385,7 +385,7 @@ This kind of approach of using interfaces to declare **only what you need** is v
 
 ## Further refactoring
 
-Now that you have some understanding of structs we can now introduce "table driven tests".
+Now that you have some understanding of structs we can introduce "table driven tests".
 
 [Table driven tests](https://github.com/golang/go/wiki/TableDrivenTests) are useful when you want to build a list of test cases that can be tested in the same manner.
 
@@ -504,9 +504,9 @@ When you scan this
 {Triangle{12, 6}, 36.0},
 ```
 
-It's not immediately clear what all the numbers represent and you should be aiming for your tests to easily understood.
+It's not immediately clear what all the numbers represent and you should be aiming for your tests to be easily understood.
 
-So far you've only been shown one syntax for creating instances of structs `MyStruct{val1, val2}` but you can optionally name the fields.
+So far you've only been shown syntax for creating instances of structs `MyStruct{val1, val2}` but you can optionally name the fields.
 
 Let's see what it looks like
 

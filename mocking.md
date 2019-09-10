@@ -2,7 +2,7 @@
 
 **[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/master/mocking)**
 
-You have been asked to write a program which counts from 3, printing each number on a new line (with a 1 second pause) and when it reaches zero it will print "Go!" and exit.
+You have been asked to write a program which counts down from 3, printing each number on a new line (with a 1 second pause) and when it reaches zero it will print "Go!" and exit.
 
 ```
 3
@@ -25,12 +25,12 @@ While this is a pretty trivial program, to test it fully we will need as always 
 
 What do I mean by iterative? We make sure we take the smallest steps we can to have _useful software_.
 
-We dont want to spend a long time with code that will theoretically work after some hacking because that's often how developers fall down rabit holes. **It's an important skill to be able to slice up requirements as small as you can so you can have _working software_.**
+We don't want to spend a long time with code that will theoretically work after some hacking because that's often how developers fall down rabbit holes. **It's an important skill to be able to slice up requirements as small as you can so you can have _working software_.**
 
 Here's how we can divide our work up and iterate on it:
 
 - Print 3
-- Print 3 to Go!
+- Print 1, 2, 3 and Go!
 - Wait a second between each line
 
 ## Write the test first
@@ -47,7 +47,7 @@ func TestCountdown(t *testing.T) {
     want := "3"
 
     if got != want {
-        t.Errorf("got '%s' want '%s'", got, want)
+        t.Errorf("got %q want %q", got, want)
     }
 }
 ```
@@ -154,7 +154,7 @@ func TestCountdown(t *testing.T) {
 Go!`
 
     if got != want {
-        t.Errorf("got '%s' want '%s'", got, want)
+        t.Errorf("got %q want %q", got, want)
     }
 }
 ```
@@ -253,7 +253,7 @@ func (s *SpySleeper) Sleep() {
 }
 ```
 
-_Spies_ are a kind of _mock_ which can record how a dependency is used. They can record the arguments sent in, how many times, etc. In our case, we're keeping track of how many times `Sleep()` is called so we can check it in our test.
+_Spies_ are a kind of _mock_ which can record how a dependency is used. They can record the arguments sent in, how many times it has been called, etc. In our case, we're keeping track of how many times `Sleep()` is called so we can check it in our test.
 
 Update the tests to inject a dependency on our Spy and assert that the sleep has been called 4 times.
 
@@ -271,7 +271,7 @@ func TestCountdown(t *testing.T) {
 Go!`
 
     if got != want {
-        t.Errorf("got '%s' want '%s'", got, want)
+        t.Errorf("got %q want %q", got, want)
     }
 
     if spySleeper.Calls != 4 {
@@ -408,7 +408,7 @@ const sleep = "sleep"
 
 Our `CountdownOperationsSpy` implements both `io.Writer` and `Sleeper`, recording every call into one slice. In this test we're only concerned about the order of operations, so just recording them as list of named operations is sufficient.
 
-We can now add a sub-test into our test suite.
+We can now add a sub-test into our test suite which verifies our sleeps and prints operate in the order we hope
 
 ```go
 t.Run("sleep before every print", func(t *testing.T) {
@@ -432,7 +432,7 @@ t.Run("sleep before every print", func(t *testing.T) {
 })
 ```
 
-This test should now fail. Revert it back and the new test should pass.
+This test should now fail. Revert `Countdown` back to how it was to fix the test.
 
 We now have two tests spying on the `Sleeper` so we can now refactor our test so one is testing what is being printed and the other one is ensuring we're sleeping in between the prints. Finally we can delete our first spy as it's not used anymore.
 
@@ -450,7 +450,7 @@ func TestCountdown(t *testing.T) {
 Go!`
 
         if got != want {
-            t.Errorf("got '%s' want '%s'", got, want)
+            t.Errorf("got %q want %q", got, want)
         }
     })
 
@@ -480,7 +480,7 @@ We now have our function and its 2 important properties properly tested.
 
 ## Extending Sleeper to be configurable
 
-A nice feature would be for the `Sleeper` to be configurable.
+A nice feature would be for the `Sleeper` to be configurable. This means that we can adjust the sleep time in our main program.
 
 ### Write the test first
 
@@ -493,7 +493,7 @@ type ConfigurableSleeper struct {
 }
 ```
 
-We are using `duration` to configure the time slept and `sleep` as a way to pass in a sleep function. The signature of `sleep` is the same as for `time.Sleep` allowing us to use `time.Sleep` in our real implementation and a spy in our tests.
+We are using `duration` to configure the time slept and `sleep` as a way to pass in a sleep function. The signature of `sleep` is the same as for `time.Sleep` allowing us to use `time.Sleep` in our real implementation and the following spy in our tests:
 
 ```go
 type SpyTime struct {
@@ -553,7 +553,7 @@ func (c *ConfigurableSleeper) Sleep() {
 }
 ```
 
-With this change all of the test should be passing again.
+With this change all of the tests should be passing again and you might wonder why all the hassle as the main program didn't change at all. Hopefully it becomes clear after the following section.
 
 ### Cleanup and refactor
 
@@ -568,7 +568,7 @@ func main() {
 
 If we run the tests and the program manually, we can see that all the behavior remains the same.
 
-Since we are using the `ConfigurableSleeper`,  it is safe to delete the `DefaultSleeper` implementation. Wrapping up our program.
+Since we are using the `ConfigurableSleeper`, it is now safe to delete the `DefaultSleeper` implementation. Wrapping up our program and having a more [generic](https://stackoverflow.com/questions/19291776/whats-the-difference-between-abstraction-and-generalization) Sleeper with arbitrary long countdowns.
 
 ## But isn't mocking evil?
 
@@ -578,7 +578,7 @@ People normally get in to a bad state when they don't _listen to their tests_ an
 
 If your mocking code is becoming complicated or you are having to mock out lots of things to test something, you should _listen_ to that bad feeling and think about your code. Usually it is a sign of
 
-- The thing you are testing is having to do too many things
+- The thing you are testing is having to do too many things (because it has too many dependencies to mock)
   - Break the module apart so it does less
 - Its dependencies are too fine-grained
   - Think about how you can consolidate some of these dependencies into one meaningful module
