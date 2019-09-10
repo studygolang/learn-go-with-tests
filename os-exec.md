@@ -15,7 +15,7 @@
 A few things
 
 - When something is difficult to test, it's often due to the separation of concerns not being quite right
-- Dont add "test modes" into your code, instead use [Dependency Injection](/dependency-injection.md) so that you can model your dependencies and separate concerns. 
+- Don't add "test modes" into your code, instead use [Dependency Injection](/dependency-injection.md) so that you can model your dependencies and separate concerns. 
 
 I have taken the liberty of guessing what the code might look like
 
@@ -61,7 +61,7 @@ func TestGetData(t *testing.T) {
 	want := "HAPPY NEW YEAR!"
 
 	if got != want {
-		t.Errorf("got '%s', want '%s'", got, want)
+		t.Errorf("got %q, want %q", got, want)
 	}
 }
 ```
@@ -110,7 +110,7 @@ func TestGetDataIntegration(t *testing.T) {
 	want := "HAPPY NEW YEAR!"
 
 	if got != want {
-		t.Errorf("got '%s', want '%s'", got, want)
+		t.Errorf("got %q, want %q", got, want)
 	}
 }
 ```
@@ -128,7 +128,7 @@ func TestGetData(t *testing.T) {
 	want := "CATS ARE THE BEST ANIMAL"
 
 	if got != want {
-		t.Errorf("got '%s', want '%s'", got, want)
+		t.Errorf("got %q, want %q", got, want)
 	}
 }
 

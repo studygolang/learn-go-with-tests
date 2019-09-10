@@ -210,7 +210,7 @@ help us know when we're handling concurrency predictably.
 
 ### ... and we're back.
 
-We are caught by the original tests `WebsiteChecker` is now returning an
+We are caught by the original tests `CheckWebsites` is now returning an
 empty map. What went wrong?
 
 None of the goroutines that our `for` loop started had enough time to add
@@ -517,7 +517,7 @@ have been performed because
 > [Premature optimization is the root of all evil][popt]
 > -- Donald Knuth
 
-[DI]: ../dependency-injection.md#
+[DI]: dependency-injection.md
 [wrf]: http://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast
 [godoc_race_detector]: https://blog.golang.org/race-detector
 [popt]: http://wiki.c2.com/?PrematureOptimization

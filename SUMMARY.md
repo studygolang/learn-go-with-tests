@@ -19,6 +19,8 @@
 * [Reflection](reflection.md)
 * [Sync](sync.md)
 * [Context](context.md)
+* [Intro to property based tests](roman-numerals.md)
+* [Maths](math.md)
 
 ## Build an application
 

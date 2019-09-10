@@ -20,7 +20,7 @@ func TestRepeat(t *testing.T) {
     expected := "aaaaa"
 
     if repeated != expected {
-        t.Errorf("expected '%s' but got '%s'", expected, repeated)
+        t.Errorf("expected %q but got %q", expected, repeated)
     }
 }
 ```
@@ -61,7 +61,13 @@ func Repeat(character string) string {
 }
 ```
 
-Unlike other languages like C, Java, or JavaScript there are no parentheses surrounding the three components of the for statement and the braces { } are always required.
+Unlike other languages like C, Java, or JavaScript there are no parentheses surrounding the three components of the for statement and the braces { } are always required. You might wonder what is happening in the row
+
+```go
+    var repeated string
+```
+
+as we've been using `:=` so far to declare and initializing variables. However, `:=` is simply [short hand for both steps](https://gobyexample.com/variables). Here we are declaring a `string` variable only. Hence, the explicit version. We can also use `var` to declare functions, as we'll see later on.
 
 Run the test and it should pass.
 

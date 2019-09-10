@@ -164,6 +164,18 @@ The difference is the receiver type is `*Wallet` rather than `Wallet` which you 
 
 Try and re-run the tests and they should pass.
 
+Now you might wonder, why did they pass? We didn't dereference the pointer in the function, like so:
+
+```go
+func (w *Wallet) Balance() int {
+    return (*w).balance
+}
+```
+
+and seemingly addressed the object directly. In fact, the code above using `(*w)` is absolutely valid. However, the makers of Go deemed this notation cumbersome, so the language permits us to write `w.balance`, without explicit dereference.
+These pointers to structs even have an own name: _struct pointers_ and they are [automatically dereferenced](https://golang.org/ref/spec#Method_values).
+
+
 ## Refactor
 
 We said we were making a Bitcoin wallet but we have not mentioned them so far. We've been using `int` because they're a good type for counting things!
@@ -410,7 +422,7 @@ Let's make a quick test helper for our error check just to help our test read cl
 assertError := func(t *testing.T, err error) {
     t.Helper()
     if err == nil {
-        t.Error("wanted an error but didnt get one")
+        t.Error("wanted an error but didn't get one")
     }
 }
 ```
@@ -443,7 +455,7 @@ assertError := func(t *testing.T, got error, want string) {
     }
 
     if got.Error() != want {
-        t.Errorf("got '%s', want '%s'", got, want)
+        t.Errorf("got %q, want %q", got, want)
     }
 }
 ```
@@ -538,7 +550,7 @@ func assertBalance(t *testing.T, wallet Wallet, want Bitcoin) {
     got := wallet.Balance()
 
     if got != want {
-        t.Errorf("got '%s' want '%s'", got, want)
+        t.Errorf("got %q want %q", got, want)
     }
 }
 
@@ -549,7 +561,7 @@ func assertError(t *testing.T, got error, want error) {
     }
 
     if got != want {
-        t.Errorf("got '%s', want '%s'", got, want)
+        t.Errorf("got %q, want %q", got, want)
     }
 }
 ```
@@ -617,7 +629,7 @@ func assertBalance(t *testing.T, wallet Wallet, want Bitcoin) {
 func assertNoError(t *testing.T, got error) {
     t.Helper()
     if got != nil {
-        t.Fatal("got an error but didnt want one")
+        t.Fatal("got an error but didn't want one")
     }
 }
 
@@ -638,12 +650,12 @@ func assertError(t *testing.T, got error, want error) {
 ### Pointers
 
 * Go copies values when you pass them to functions/methods so if you're writing a function that needs to mutate state you'll need it to take a pointer to the thing you want to change.
-* The fact that Go takes a copy of values is useful a lot of the time but sometimes you wont want your system to make a copy of something, in which case you need to pass a reference. Examples could be very large data or perhaps things you intend only to have one instance of \(like database connection pools\).
+* The fact that Go takes a copy of values is useful a lot of the time but sometimes you won't want your system to make a copy of something, in which case you need to pass a reference. Examples could be very large data or perhaps things you intend only to have one instance of \(like database connection pools\).
 
 ### nil
 
 * Pointers can be nil
-* When a function returns a pointer to something, you need to make sure you check if it's nil or you might raise a runtime exception, the compiler wont help you here.
+* When a function returns a pointer to something, you need to make sure you check if it's nil or you might raise a runtime exception, the compiler won't help you here.
 * Useful for when you want to describe a value that could be missing
 
 ### Errors
