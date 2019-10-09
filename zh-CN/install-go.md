@@ -26,13 +26,7 @@ xcode-select --install
 brew install go
 ```
 
-如果你想把你的程序部署到 Linux 服务器，你应该启用交叉编译的特性。需要的话可用下面的命令安装：
-
-```sh
-brew install go --cross-compile-common
-```
-
-*你应该参照你所用的包管理工具给出的建议，不要依赖这种特定操作系统的安装方式。*
+*你应该参照你所用的包管理工具给出的建议。**注意**，这些可能是由主机的操作系统所决定的。*
 
 你可以用下面的命令验证安装是否成功：
 
@@ -56,7 +50,7 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 ```
 
-提示：你应该打开一个新的 shell 来使这些变量生效。
+*注意*：你应该打开一个新的 shell 来使这些变量生效。
 
 Go 假设你的工作区包含一个特定的目录结构。
 
@@ -70,21 +64,15 @@ mkdir -p $GOPATH/src $GOPATH/pkg $GOPATH/bin
 
 ## Go 编辑器
 
-编辑器是可根据个人口味定制化的，可能你已经对你的编辑器配置了 Go 的支持。如果还没有，你可以考虑一下像 [Visual Studio Code](https://code.visualstudio.com) 这类对 Go 有良好支持的编辑器。
+编辑器是可根据个人口味定制化的，可能你的编辑器已经配置了 Go 的支持。如果还没有，你可以考虑使用 [Visual Studio Code](https://code.visualstudio.com) 这类对 Go 有良好支持的编辑器。
 
-因为 VS Code 是一个图形界面程序，用 brew 安装 VS Code 需要安装一个叫 cask 的扩展。
-
-```sh
-brew tap caskroom/cask
-```
-
-此时你可以使用 brew 安装 VS Code 了。
+你可以使用以下命令安装 VS Code：
 
 ```sh
 brew cask install visual-studio-code
 ```
 
-然后可以运行以下 shell 命令来验证 VS Code 是否安装正确。
+然后运行以下 shell 命令来验证 VS Code 是否安装正确。
 
 ```sh
 code .
@@ -93,26 +81,25 @@ code .
 默认 VS Code 只自带了少量功能集成，你可以通过安装扩展以集成更多功能。如果想添加对 Go 的支持，你需要安装一些扩展。VS Code 有大量这类扩展，其中一个很棒的扩展是 [Luke Hoban 的 vscode-go](https://github.com/Microsoft/vscode-go)。可通过以下方法安装：
 
 ```sh
-code --install-extension lukehoban.Go
+code --install-extension ms-vscode.go
 ```
 
-当你第一次打开一个 Go 文件时，它会提示缺少分析工具，你应该点击按钮来安装它们。由 VS Code 安装（和使用）的工具列表可在[这里](https://github.com/Microsoft/vscode-go/wiki/Go-tools-that-the-Go-extension-depends-on)找到。
+当你第一次用 VS Code 打开 Go 文件时，它会提示缺少分析工具，你应该点击按钮来安装它们。由 VS Code 安装（和使用）的工具列表可在[这里](https://github.com/Microsoft/vscode-go/wiki/Go-tools-that-the-Go-extension-depends-on)找到。
 
 ## Go 调试
 
-在 VS Code 中调试 Go 代码的一个好的选择是 Delve。可通过以下 go get 命令安装：
+在 VS Code 中调试 Go 代码建议使用 Delve。可以通过以下 go get 命令安装：
 
 ```sh
-go get -u github.com/derekparker/delve/cmd/dlv
+go get -u github.com/go-delve/delve/cmd/dlv
 ```
 
 ## Go 语法检查
 
-对默认的语法检查进行增强可以用 [Gometalinter](https://github.com/alecthomas/gometalinter)。可通过以下方式安装：
+对默认的语法检查进行增强可以用 [GolangCI-Lint](https://github.com/golangci/golangci-lint)。可通过以下方式安装：
 
 ```sh
-go get -u github.com/alecthomas/gometalinter
-gometalinter --install
+go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 ```
 
 ## 重构和工具
@@ -139,7 +126,7 @@ gometalinter --install
 
 ## 总结
 
-此时你应该已经安装了 Go，一个可用的编辑器和一些基本的工具。Go 拥有非常庞大的第三方生态系统。我们在本章提到了一些有用的组件，有关更完整的列表，请参阅 https://awesome-go.com 。
+此时你应该已经拥有安装好的 Go，一个可用的编辑器和一些基本的工具。Go 拥有非常庞大的第三方生态系统。我们在本章提到了一些有用的组件，有关更完整的列表，请参阅 https://awesome-go.com 。
 
 ---
 
