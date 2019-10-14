@@ -303,7 +303,7 @@ func TestSumAll(t *testing.T) {
 }
 ```
 
-这里我们尝试比较 `slice` 和 `string`。这显然是不合理的，但是却通过了测试！所以使用 `reflect.DeepEqual` 比较简洁但是在使用时需多加小心。
+这里我们尝试比较 `slice` 和 `string`。这显然是不合理的，但是却通过了编译！所以使用 `reflect.DeepEqual` 比较简洁但是在使用时需多加小心。
 
 回到我们的测试中。运行测试会得到以下信息：
 
