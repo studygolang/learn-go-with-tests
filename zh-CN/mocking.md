@@ -340,11 +340,11 @@ func main() {
 ```go
 func Countdown(out io.Writer, sleeper Sleeper) {
     for i := countdownStart; i > 0; i-- {
-        sleeper.sleep()
+        sleeper.Sleep()
         fmt.Fprintln(out, i)
     }
 
-    sleeper.sleep()
+    sleeper.Sleep()
     fmt.Fprint(out, finalWord)
 }
 ```
