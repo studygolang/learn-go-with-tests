@@ -191,7 +191,7 @@ type Counter struct {
 }
 ```
 
-It can be argued that it can make the code a bit more elegant.
+然后这样调用
 
 ```go
 func (c *Counter) Inc() {
@@ -200,41 +200,41 @@ func (c *Counter) Inc() {
 	c.value++
 }
 ```
+看起来代码变得简介了,但实际上这是完全错误的做法
 
-This _looks_ nice but while programming is a hugely subjective discipline, this is **bad and wrong**. 
+有时候开发人员会忘记,把一种类型嵌入到另一种类型意味着这种类型的方法成为了被嵌入类型公开接口的一部分.但是这是大部分开发者所不希望达到的.我们应该非常谨慎的对待类型的公开接口,因为公开接口可以让别的代码去调用而可能改变被调用代码内部的数据.
 
-Sometimes people forget that embedding types means the methods of that type becomes _part of the public interface_; and you often will not want that. Remember that we should be very careful with our public APIs, the moment we make something public is the moment other code can couple themselves to it. We always want to avoid unnecessary coupling.  
+所以像上面这种方式直接暴露 Lock和Unlock是非常危险的行为.
 
-Exposing `Lock` and `Unlock` is at best confusing but at worst potentially very harmful to your software if callers of your type start calling these methods.
 
-![Showing how a user of this API can wrongly change the state of the lock](https://i.imgur.com/SWYNpwm.png)
+![API的使用者改变锁的状态](https://i.imgur.com/SWYNpwm.png)
 
-_This seems like a really bad idea_
+_看起来是个糟糕个方式_
 
-## Copying mutexes
+## 复制锁
 
-Our test passes but our code is still a bit dangerous
+虽然我们的代码能够通过测试,但是它依然是危险的.
 
-If you run `go vet` on your code you should get an error like the following
+如果你运行 `go vet` 命令,你就会看到如下的报错信息.
 
 ```
 sync/v2/sync_test.go:16: call of assertCounter copies lock value: v1.Counter contains sync.Mutex
 sync/v2/sync_test.go:39: assertCounter passes lock by value: v1.Counter contains sync.Mutex
 ```
 
-A look at the documentation of [`sync.Mutex`](https://golang.org/pkg/sync/#Mutex) tells us why
+看会看锁这部分的文档 [`sync.Mutex`](https://golang.org/pkg/sync/#Mutex) tells us why
 
-> A Mutex must not be copied after first use.
+>锁一但使用,绝不允许拷贝
 
-When we pass our `Counter` (by value) to `assertCounter` it will try and create a copy of the mutex. 
+当我们传递 `Counter` (值传递) 到 `assertCounter` 实际上会拷贝一份 mutex的副本. 
 
-To solve this we should pass in a pointer to our `Counter` instead, so change the signature of `assertCounter`
+为了解决这个问题,我们可以使用指针传递`Counter`, 改变函数`assertCounter`
 
 ```go
 func assertCounter(t *testing.T, got *Counter, want int)
 ```
 
-Our tests will no longer compile because we are trying to pass in a `Counter` rather than a `*Counter`. To solve this I prefer to create a constructor which shows readers of your API that it would be better to not initialise the type yourself.
+现在编译会不通过,因为我们尝试传递一个`Counter`而不是一个`*Counter`.解决这个问题的最好方式是编写一个构造方法.
 
 ```go
 func NewCounter() *Counter {
@@ -242,33 +242,33 @@ func NewCounter() *Counter {
 }
 ```
 
-Use this function in your tests when initialising `Counter`.
+然后使用构造方法NewCounter()来初始化Counter
 
-## Wrapping up
+## 总结
 
-We've covered a few things from the [sync package](https://golang.org/pkg/sync/)
+我们涉及到了一些新的东西[sync package](https://golang.org/pkg/sync/)
 
-- `Mutex` allows us to add locks to our data
-- `Waitgroup` is a means of waiting for goroutines to finish jobs
+- `Mutex` 允许我们给特定数据加上锁
+- `Waitgroup` 可以等待goroutine完成
 
-### When to use locks over channels and goroutines?
+### 什么时候在通道和线程上使用锁?
 
-[We've previously covered goroutines in the first concurrency chapter](concurrency.md) which let us write safe concurrent code so why would you use locks?   
-[The go wiki has a page dedicated to this topic; Mutex Or Channel](https://github.com/golang/go/wiki/MutexOrChannel)
+[复习第一章节学到的多线程](concurrency.md) 它已经可以安全的实现多线程了,为什么我们还需要用到锁?   
+[go 百科关于这部分的解释](https://github.com/golang/go/wiki/MutexOrChannel)
 
-> A common Go newbie mistake is to over-use channels and goroutines just because it's possible, and/or because it's fun. Don't be afraid to use a sync.Mutex if that fits your problem best. Go is pragmatic in letting you use the tools that solve your problem best and not forcing you into one style of code.
+> go语言新手常犯的一个错误是过度使用channels和goroutines,仅仅是因为它可以做到(某些事)或者是因为它很有趣.不要害怕使用sync.Mutex,如果它能够更好的修复你的bug. go语言是一个实用的工具用来帮你更好的解决实际问题的而并不是强迫你使用一种代码风格.
 
-Paraphrasing:
+关键词:
 
-- **Use channels when passing ownership of data** 
-- **Use mutexes for managing state**
+- **传递数据所有权时使用通道** 
+- **使用锁管理数据状态**
 
 ### go vet
 
-Remember to use go vet in your build scripts as it can alert you to some subtle bugs in your code before they hit your poor users.
+使用go vet可以发现一些细微的bug
 
-### Don't use embedding because it's convenient
+### 不要因为方便而使用嵌入类型
 
-- Think about the effect embedding has on your public API.
-- Do you _really_ want to expose these methods and have people coupling their own code to them?
-- With respect to mutexes, this could be potentially disastrous in very unpredictable and weird ways, imagine some nefarious code unlocking a mutex when it shouldn't be; this would cause some very strange bugs that will be hard to track down.
+- 思考嵌入类型会对公开API有什么影响?
+- 是否真的需要公开API?
+- 对于互斥锁，这可能会以非常难以预测和怪异的方式造成灾难性的后果，想象一下一些恶意代码在不应该互斥时解锁互斥锁; 这将导致一些非常奇怪的错误，并将很难对其进行跟踪。
