@@ -233,11 +233,11 @@ coverage: 100.0% of statements
 
 例如：
 
-`SumAll([]int{1,2}, []int{0,9})` would return `[]int{3, 9}`
+`SumAll([]int{1,2}, []int{0,9})` 返回 `[]int{3, 9}`
 
 或者
 
-`SumAll([]int{1,1,1})` would return `[]int{3}`
+`SumAll([]int{1,1,1})` 返回 `[]int{3}`
 
 ## 先写测试
 
@@ -353,7 +353,7 @@ func SumAll(numbersToSum ...[]int) []int {
 
 在这个实现中，我们不用担心切片元素会超过容量。我们开始使用空切片（在函数签名中定义），在每次计算完切片的总和后将结果添加到切片中。
 
-接下来的工作是把 `SumAll` 变成 `SumAllTails`。它会把每个切片的尾部元素想加（尾部的意思就是出去第一个元素以外的其他元素）。
+接下来的工作是把 `SumAll` 变成 `SumAllTails`。它会把每个切片的尾部元素相加（尾部的意思就是出去第一个元素以外的其他元素）。
 
 ## 先写测试
 
