@@ -30,7 +30,7 @@ We don't want to spend a long time with code that will theoretically work after 
 Here's how we can divide our work up and iterate on it:
 
 - Print 3
-- Print 1, 2, 3 and Go!
+- Print 3, 2, 1 and Go!
 - Wait a second between each line
 
 ## Write the test first
@@ -200,7 +200,7 @@ func Countdown(out io.Writer) {
 
 If you run the program now, you should get the desired output but we don't have it as a dramatic countdown with the 1 second pauses.
 
-Go let's you achieve this with `time.Sleep`. Try adding it in to our code.
+Go lets you achieve this with `time.Sleep`. Try adding it in to our code.
 
 ```go
 func Countdown(out io.Writer) {
@@ -602,13 +602,24 @@ This is usually a sign of you testing too much _implementation detail_. Try to m
 It is sometimes hard to know _what level_ to test exactly but here are some thought processes and rules I try to follow:
 
 - **The definition of refactoring is that the code changes but the behaviour stays the same**. If you have decided to do some refactoring in theory you should be able to do make the commit without any test changes. So when writing a test ask yourself
-  - Am i testing the behaviour I want or the implementation details?
-  - If i were to refactor this code, would I have to make lots of changes to the tests?
+  - Am I testing the behaviour I want or the implementation details?
+  - If I were to refactor this code, would I have to make lots of changes to the tests?
 - Although Go lets you test private functions, I would avoid it as private functions are to do with implementation.
 - I feel like if a test is working with **more than 3 mocks then it is a red flag** - time for a rethink on the design
 - Use spies with caution. Spies let you see the insides of the algorithm you are writing which can be very useful but that means a tighter coupling between your test code and the implementation. **Be sure you actually care about these details if you're going to spy on them**
 
 As always, rules in software development aren't really rules and there can be exceptions. [Uncle Bob's article of "When to mock"](https://8thlight.com/blog/uncle-bob/2014/05/10/WhenToMock.html) has some excellent pointers.
+
+#### Can't I just use a mocking framework?
+
+Mocking requires no magic and is relatively simple; using a framework can make mocking seem more complicated than it is. We don't use automocking in this chapter so that we get:
+
+- a better understanding of how to mock
+- practise implementing interfaces
+
+In collaborative projects there is value auto-generating mocks. In a team, a mock generation tool codifies consistency around the test doubles. This will avoid inconsistently written test doubles which can translate to inconsistently written tests.
+
+You should only use a mock generator that generates test doubles against an interface. Any tool that overly dictates how tests are written, or that use lots of 'magic', can get in the sea.
 
 ## Wrapping up
 

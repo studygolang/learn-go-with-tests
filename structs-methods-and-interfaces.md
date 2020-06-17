@@ -33,7 +33,7 @@ func Perimeter(width float64, height float64) float64 {
 }
 ```
 
-Results in `shapes_test.go:10: got 0 want 40`.
+Results in `shapes_test.go:10: got 0.00 want 40.00`.
 
 ## Write enough code to make it pass
 
@@ -98,7 +98,7 @@ type Rectangle struct {
 }
 ```
 
-Now lets refactor the tests to use `Rectangle` instead of plain `float64`s.
+Now let's refactor the tests to use `Rectangle` instead of plain `float64`s.
 
 ```go
 func TestPerimeter(t *testing.T) {
@@ -159,7 +159,7 @@ func TestArea(t *testing.T) {
         want := 72.0
 
         if got != want {
-            t.Errorf("got %.2f want %.2f", got, want)
+            t.Errorf("got %g want %g", got, want)
         }
     })
 
@@ -169,12 +169,14 @@ func TestArea(t *testing.T) {
         want := 314.1592653589793
 
         if got != want {
-            t.Errorf("got %.2f want %.2f", got, want)
+            t.Errorf("got %g want %g", got, want)
         }
     })
 
 }
 ```
+
+As you can see, the 'f' has been replaced by 'g', using 'f' it could be difficult to know the exact decimal number, with 'g' we get a complete decimal number in the error message \([fmt options](https://golang.org/pkg/fmt/)\).
 
 ## Try to run the test
 
@@ -212,7 +214,7 @@ We have two choices:
 
 ### What are methods?
 
-So far we have only been writing _functions_ but we have been using some methods. When we call `t.Errorf` we are calling the method `ErrorF` on the instance of our `t` \(`testing.T`\).
+So far we have only been writing _functions_ but we have been using some methods. When we call `t.Errorf` we are calling the method `Errorf` on the instance of our `t` \(`testing.T`\).
 
 A method is a function with a receiver. A method declaration binds an identifier, the method name, to a method, and associates the method with the receiver's base type.
 
@@ -229,7 +231,7 @@ func TestArea(t *testing.T) {
         want := 72.0
 
         if got != want {
-            t.Errorf("got %.2f want %.2f", got, want)
+            t.Errorf("got %g want %g", got, want)
         }
     })
 
@@ -239,7 +241,7 @@ func TestArea(t *testing.T) {
         want := 314.1592653589793
 
         if got != want {
-            t.Errorf("got %f want %f", got, want)
+            t.Errorf("got %g want %g", got, want)
         }
     })
 
@@ -280,7 +282,7 @@ func (c Circle) Area() float64  {
 }
 ```
 
-The syntax for declaring methods is almost the same as functions and that's because they're so similar. The only difference is the syntax of the method receiver `func (receiverName RecieverType) MethodName(args)`.
+The syntax for declaring methods is almost the same as functions and that's because they're so similar. The only difference is the syntax of the method receiver `func (receiverName ReceiverType) MethodName(args)`.
 
 When your method is called on a variable of that type, you get your reference to its data via the `receiverName` variable. In many other programming languages this is done implicitly and you access the receiver via `this`.
 
@@ -333,7 +335,7 @@ func TestArea(t *testing.T) {
         t.Helper()
         got := shape.Area()
         if got != want {
-            t.Errorf("got %.2f want %.2f", got, want)
+            t.Errorf("got %g want %g", got, want)
         }
     }
 
@@ -403,7 +405,7 @@ func TestArea(t *testing.T) {
     for _, tt := range areaTests {
         got := tt.shape.Area()
         if got != tt.want {
-            t.Errorf("got %.2f want %.2f", got, tt.want)
+            t.Errorf("got %g want %g", got, tt.want)
         }
     }
 
@@ -439,7 +441,7 @@ func TestArea(t *testing.T) {
     for _, tt := range areaTests {
         got := tt.shape.Area()
         if got != tt.want {
-            t.Errorf("got %.2f want %.2f", got, tt.want)
+            t.Errorf("got %g want %g", got, tt.want)
         }
     }
 
@@ -566,7 +568,7 @@ func TestArea(t *testing.T) {
         t.Run(tt.name, func(t *testing.T) {
             got := tt.shape.Area()
             if got != tt.hasArea {
-                t.Errorf("%#v got %.2f want %.2f", tt.shape, got, tt.hasArea)
+                t.Errorf("%#v got %g want %g", tt.shape, got, tt.hasArea)
             }
         })
 

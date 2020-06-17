@@ -170,14 +170,14 @@ We'll need to add the `BlindAlerter` as a field on our `CLI` so we can reference
 ```go
 type CLI struct {
 	playerStore PlayerStore
-	in          *bufio.Reader
+	in          *bufio.Scanner
 	alerter     BlindAlerter
 }
 
 func NewCLI(store PlayerStore, in io.Reader, alerter BlindAlerter) *CLI {
 	return &CLI{
 		playerStore: store,
-		in:          bufio.NewReader(in),
+		in:          bufio.NewScanner(in),
 		alerter:     alerter,
 	}
 }
@@ -493,7 +493,7 @@ We need to add our new dependency to our `CLI` so we can reference it in `PlayPo
 ```go
 type CLI struct {
 	playerStore PlayerStore
-	in          *bufio.Reader
+	in          *bufio.Scanner
 	out         io.Writer
 	alerter     BlindAlerter
 }
@@ -501,7 +501,7 @@ type CLI struct {
 func NewCLI(store PlayerStore, in io.Reader, out io.Writer, alerter BlindAlerter) *CLI {
 	return &CLI{
 		playerStore: store,
-		in:          bufio.NewReader(in),
+		in:          bufio.NewScanner(in),
 		out:         out,
 		alerter:     alerter,
 	}
@@ -542,7 +542,7 @@ t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
     cli := poker.NewCLI(dummyPlayerStore, in, stdout, blindAlerter)
     cli.PlayPoker()
 
-    got :=stdout.String()
+    got := stdout.String()
     want := poker.PlayerPrompt
 
     if got != want {
@@ -598,7 +598,7 @@ Remember, we are free to commit whatever sins we need to make this work. Once we
 func (cli *CLI) PlayPoker() {
 	fmt.Fprint(cli.out, PlayerPrompt)
 	
-    numberOfPlayers, _ := strconv.Atoi(cli.readLine())
+	numberOfPlayers, _ := strconv.Atoi(cli.readLine())
 
 	cli.scheduleBlindAlerts(numberOfPlayers)
 
@@ -667,15 +667,14 @@ func (p *Game) Finish(winner string) {
 
 // cli.go
 type CLI struct {
-	playerStore PlayerStore
-	in          *bufio.Reader
+	in          *bufio.Scanner
 	out         io.Writer
 	game        *Game
 }
 
 func NewCLI(store PlayerStore, in io.Reader, out io.Writer, alerter BlindAlerter) *CLI {
 	return &CLI{
-		in:  bufio.NewReader(in),
+		in:  bufio.NewScanner(in),
 		out: out,
 		game: &Game{
 			alerter: alerter,
@@ -732,7 +731,7 @@ All we need to do right now is change `NewCLI`
 ```go
 func NewCLI(in io.Reader, out io.Writer, game *Game) *CLI {
 	return &CLI{
-		in:  bufio.NewReader(in),
+		in:  bufio.NewScanner(in),
 		out: out,
 		game: game,
 	}
@@ -783,7 +782,7 @@ This is just an exercise in copying our `CLI` tests but with less dependencies
 func TestGame_Start(t *testing.T) {
 	t.Run("schedules alerts on game start for 5 players", func(t *testing.T) {
 		blindAlerter := &poker.SpyBlindAlerter{}
-		game := poker.NewTexasHoldem(blindAlerter, dummyPlayerStore)
+		game := poker.NewGame(blindAlerter, dummyPlayerStore)
 
 		game.Start(5)
 
@@ -806,7 +805,7 @@ func TestGame_Start(t *testing.T) {
 
 	t.Run("schedules alerts on game start for 7 players", func(t *testing.T) {
 		blindAlerter := &poker.SpyBlindAlerter{}
-		game := poker.NewTexasHoldem(blindAlerter, dummyPlayerStore)
+		game := poker.NewGame(blindAlerter, dummyPlayerStore)
 
 		game.Start(7)
 
@@ -824,7 +823,7 @@ func TestGame_Start(t *testing.T) {
 
 func TestGame_Finish(t *testing.T) {
 	store := &poker.StubPlayerStore{}
-	game := poker.NewTexasHoldem(dummyBlindAlerter, store)
+	game := poker.NewGame(dummyBlindAlerter, store)
 	winner := "Ruth"
 
 	game.Finish(winner)
@@ -894,8 +893,8 @@ Here is an example of one of the tests being fixed; try and do the rest yourself
 			t.Errorf("got %q, want %q", gotPrompt, wantPrompt)
 		}
 
-		if game.StartCalledWith != 7 {
-			t.Errorf("wanted Start called with 7 but got %d", game.StartCalledWith)
+		if game.StartedWith != 7 {
+			t.Errorf("wanted Start called with 7 but got %d", game.StartedWith)
 		}
 	})
 ```
@@ -1086,7 +1085,7 @@ A very handy way of scheduling a function call after a specific duration. It is 
 
 Some of my favourites are
 
-- `time.After(duration)` which return you a `chan Time` when the duration has expired. So if you wish to do something _after_ a specific time, this can help. 
+- `time.After(duration)` returns a `chan Time` when the duration has expired. So if you wish to do something _after_ a specific time, this can help. 
 - `time.NewTicker(duration)` returns a `Ticker` which is similar to the above in that it returns a channel but this one "ticks" every duration, rather than just once. This is very handy if you want to execute some code every `N duration`.  
 
 ### More examples of good separation of concerns
@@ -1101,7 +1100,7 @@ Our tests got messy. We had too many assertions (check this input, schedules the
 
 Even though the tests and the production code was a bit cluttered we could freely refactor backed by our tests. 
 
-Remember when you get in to these situations to always take small steps and re-run the tests after every change. 
+Remember when you get into these situations to always take small steps and re-run the tests after every change. 
 
 It would've been dangerous to refactor both the test code _and_ the production code at the same time, so we first refactored the production code (in the current state we couldn't improve the tests much) without changing its interface so we could rely on our tests as much as we could while changing things. _Then_ we refactored the tests after the design improved.
 

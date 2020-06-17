@@ -1,5 +1,7 @@
 # Mathematics
 
+**[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/master/math)**
+
 For all the power of modern computers to perform huge sums at
 lightning speed, the average developer rarely uses any mathematics
 to do their job. But not today!  Today we'll use mathematics to
@@ -461,7 +463,7 @@ There are two ways around this:
 2. Refactor our function by refactoring our equation
 
 Now (1) may not seem all that appealing, but it's often the only way to make
-floating point equality work. Being inaccurate by some infinitessimal fraction
+floating point equality work. Being inaccurate by some infinitesimal fraction
 is frankly not going to matter for the purposes of drawing a clockface, so we
 could write a function that defines a 'close enough' equality for our angles.
 But there's a simple way we can get the accuracy back: we rearrange the equation
@@ -633,7 +635,7 @@ FAIL	github.com/gypsydave5/learn-go-with-tests/math/v4/clockface	0.007s
 ```
 
 Wait, what (again)? Looks like we've been cursed by the floats once more - both
-of those unexpected numbers are _infinitessimal_ - way down at the 16th decimal
+of those unexpected numbers are _infinitesimal_ - way down at the 16th decimal
 place. So again we can either choose to try to increase precision, or to just
 say that they're roughly equal and get on with our lives.
 
@@ -694,7 +696,7 @@ v4 ends
 
 ### Repeat for new requirements
 
-Well, saying _new_ isn't enirely accurate - really what we can do now is get
+Well, saying _new_ isn't entirely accurate - really what we can do now is get
 that acceptance test passing! Let's remind ourselves of what it looks like:
 
 
@@ -1020,7 +1022,7 @@ func secondHand(w io.Writer, t time.Time) {
 	p = Point{p.X * secondHandLength, p.Y * secondHandLength} // scale
 	p = Point{p.X, -p.Y}                                      // flip
 	p = Point{p.X + clockCentreX, p.Y + clockCentreY}         // translate
-	fmt.Fprintf(w, `<line x1="150" y1="150" x2="%.3f" y2="%.3f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
+	fmt.Fprintf(w, `<line x1="150" y1="150" x2="%f" y2="%f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
 }
 
 const svgStart = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -1118,8 +1120,8 @@ tests, to sharpen everything up.
 type SVG struct {
 	XMLName xml.Name `xml:"svg"`
 	Xmlns   string   `xml:"xmlns,attr"`
-	Width   float64  `xml:"width,attr"`
-	Height  float64  `xml:"height,attr"`
+	Width   string   `xml:"width,attr"`
+	Height  string   `xml:"height,attr"`
 	ViewBox string   `xml:"viewBox,attr"`
 	Version string   `xml:"version,attr"`
 	Circle  Circle   `xml:"circle"`
@@ -1574,7 +1576,7 @@ ok  	github.com/gypsydave5/learn-go-with-tests/math/v9/clockface	0.006s
 But the proof of the pudding is in the eating - if we now compile and run our
 `clockface` program, we should see something like
 
-![a clock with only a second hand](math/v9/clockface/clockface/clock.svg)
+![a clock with second and minute hands](math/v9/clockface/clockface/clock.svg)
 
 ### Refactor
 
@@ -1633,7 +1635,7 @@ func TestSVGWriterHourHand(t *testing.T) {
 			xml.Unmarshal(b.Bytes(), &svg)
 
 			if !containsLine(c.line, svg.Line) {
-				t.Errorf("Expected to find the minute hand line %+v, in the SVG lines %+v", c.line, svg.Line)
+				t.Errorf("Expected to find the hour hand line %+v, in the SVG lines %+v", c.line, svg.Line)
 			}
 		})
 	}
@@ -1645,7 +1647,7 @@ func TestSVGWriterHourHand(t *testing.T) {
 ```
 --- FAIL: TestSVGWriterHourHand (0.00s)
     --- FAIL: TestSVGWriterHourHand/06:00:00 (0.00s)
-        clockface_acceptance_test.go:113: Expected to find the minute hand line {X1:150 Y1:150 X2:150 Y2:200}, in the SVG lines [{X1:150 Y1:150 X2:150 Y2:60} {X1:150 Y1:150 X2:150 Y2:70}]
+        clockface_acceptance_test.go:113: Expected to find the hour hand line {X1:150 Y1:150 X2:150 Y2:200}, in the SVG lines [{X1:150 Y1:150 X2:150 Y2:60} {X1:150 Y1:150 X2:150 Y2:70}]
 FAIL
 exit status 1
 FAIL	github.com/gypsydave5/learn-go-with-tests/math/v10/clockface	0.013s
@@ -2004,7 +2006,7 @@ func TestSVGWriterHourHand(t *testing.T) {
 			xml.Unmarshal(b.Bytes(), &svg)
 
 			if !containsLine(c.line, svg.Line) {
-				t.Errorf("Expected to find the minute hand line %+v, in the SVG lines %+v", c.line, svg.Line)
+				t.Errorf("Expected to find the hour hand line %+v, in the SVG lines %+v", c.line, svg.Line)
 			}
 		})
 	}
@@ -2016,7 +2018,7 @@ func TestSVGWriterHourHand(t *testing.T) {
 ```
 --- FAIL: TestSVGWriterHourHand (0.00s)
     --- FAIL: TestSVGWriterHourHand/06:00:00 (0.00s)
-        clockface_acceptance_test.go:113: Expected to find the minute hand line {X1:150 Y1:150 X2:150 Y2:200}, in the SVG lines [{X1:150 Y1:150 X2:150 Y2:60} {X1:150 Y1:150 X2:150 Y2:70}]
+        clockface_acceptance_test.go:113: Expected to find the hour hand line {X1:150 Y1:150 X2:150 Y2:200}, in the SVG lines [{X1:150 Y1:150 X2:150 Y2:60} {X1:150 Y1:150 X2:150 Y2:70}]
 FAIL
 exit status 1
 FAIL	github.com/gypsydave5/learn-go-with-tests/math/v10/clockface	0.013s

@@ -323,7 +323,7 @@ func ConvertToRoman(arabic int) string {
 
 ## Refactor
 
-Repetition in loops like this are usually a sign of an abstraction waiting to be called out. Short-circuiting loops can be an effective tool for reabability but it could also be telling you something else.
+Repetition in loops like this are usually a sign of an abstraction waiting to be called out. Short-circuiting loops can be an effective tool for readability but it could also be telling you something else.
 
 We are looping over our Arabic number and if we hit certain symbols we are calling `break` but what we are _really_ doing is subtracting over `i` in a ham-fisted manner.
 
@@ -411,7 +411,7 @@ type RomanNumeral struct {
 	Symbol string
 }
 
-var RomanNumerals = []RomanNumeral {
+var allRomanNumerals = []RomanNumeral {
 	{10, "X"},
 	{9, "IX"},
 	{5, "V"},
@@ -423,7 +423,7 @@ func ConvertToRoman(arabic int) string {
 
 	var result strings.Builder
 
-	for _, numeral := range RomanNumerals {
+	for _, numeral := range allRomanNumerals {
 		for arabic >= numeral.Value {
 			result.WriteString(numeral.Symbol)
 			arabic -= numeral.Value
@@ -447,12 +447,8 @@ Here are some test cases, try and make them pass.
 {"50 gets converted to L", 50, "L"},
 ```
 
-If you're a cheater, all you needed to add to the `RomanNumerals` array is
+Need help? You can see what symbols to add in [this gist](https://gist.github.com/pamelafox/6c7b948213ba55332d86efd0f0b037de).
 
-```go
-{50, "L"},
-{40, "XL"},
-```
 
 ## And the rest!
 
@@ -520,10 +516,10 @@ func TestRomanNumerals(t *testing.T) {
 - I removed `description` as I felt the _data_ described enough of the information.
 - I added a few other edge cases I found just to give me a little more confidence. With table based tests this is very cheap to do.
 
-I didn't change the algorithm, all I had to do was update the `RomanNumerals` array.
+I didn't change the algorithm, all I had to do was update the `allRomanNumerals` array.
 
 ```go
-var RomanNumerals = []RomanNumeral{
+var allRomanNumerals = []RomanNumeral{
 	{1000, "M"},
 	{900, "CM"},
 	{500, "D"},
@@ -661,7 +657,7 @@ func ConvertToArabic(roman string) int {
 			potentialNumber := string([]byte{symbol, nextSymbol})
 
 			// get the value of the two character string
-			value := romanNumerals.ValueOf(potentialNumber)
+			value := allRomanNumerals.ValueOf(potentialNumber)
 
 			if value != 0 {
 				total += value
@@ -702,7 +698,7 @@ func ConvertToArabic(roman string) int {
 			potentialNumber := string([]byte{symbol, nextSymbol})
 
 			// get the value of the two character string
-			value := romanNumerals.ValueOf(potentialNumber)
+			value := allRomanNumerals.ValueOf(potentialNumber)
 
 			if value != 0 {
 				total += value
@@ -750,14 +746,14 @@ func ConvertToArabic(roman string) int {
 			// build the two character string
 			potentialNumber := string([]byte{symbol, nextSymbol})
 
-			if value := romanNumerals.ValueOf(potentialNumber); value != 0 {
+			if value := allRomanNumerals.ValueOf(potentialNumber); value != 0 {
 				total += value
 				i++ // move past this character too for the next loop
 			} else {
 				total++ // this is fishy...
 			}
 		} else {
-			total+=romanNumerals.ValueOf(string([]byte{symbol}))
+			total+=allRomanNumerals.ValueOf(string([]byte{symbol}))
 		}
 	}
 	return total
@@ -791,14 +787,14 @@ func ConvertToArabic(roman string) int {
 		symbol := roman[i]
 
 		if couldBeSubtractive(i, symbol, roman) {
-			if value := romanNumerals.ValueOf(symbol, roman[i+1]); value != 0 {
+			if value := allRomanNumerals.ValueOf(symbol, roman[i+1]); value != 0 {
 				total += value
 				i++ // move past this character too for the next loop
 			} else {
 				total++ // this is fishy...
 			}
 		} else {
-			total+=romanNumerals.ValueOf(symbol)
+			total+=allRomanNumerals.ValueOf(symbol)
 		}
 	}
 	return total
@@ -836,13 +832,13 @@ Try again, they still fail. However we left a comment earlier...
 total++ // this is fishy...
 ```
 
-We should never be just increment total as that implies every symbol is a `I`. Replace it with
+We should never be just incrementing `total` as that implies every symbol is a `I`. Replace it with:
 
 ```go
-total += romanNumerals.ValueOf(symbol)
+total += allRomanNumerals.ValueOf(symbol)
 ```
 
-And all the tests pass! Now that we have fully working software we can indulge ourselves in some refactoring, with confidence
+And all the tests pass! Now that we have fully working software we can indulge ourselves in some refactoring, with confidence.
 
 ## Refactor
 
