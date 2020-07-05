@@ -1,6 +1,6 @@
 # Contributing
 
-Contributions are very welcome. I hope for this to become a great home for guides of how to learn Go by writing tests. Consider submitting a PR or creating an issue which you can do [here](https://github.com/quii/learn-go-with-tests).
+Contributions are very welcome. I hope for this to become a great home for guides of how to learn Go by writing tests. Consider submitting a PR or creating an issue which you can do [here](https://github.com/quii/learn-go-with-tests/issues).
 
 ## What we're looking for
 
@@ -9,6 +9,12 @@ Contributions are very welcome. I hope for this to become a great home for guide
 * Show how Go's tooling, like benchmarking, race detectors, etc can help you arrive at great software.
 
 If you don't feel confident to submit your own guide, submitting an issue for something you want to learn is still a valuable contribution.
+
+### ⚠️ Get feedback quickly for new content ⚠️
+
+- TDD teaches us to work iteratively and get feedback and I strongly suggest you do the same if you wish to contribute
+    - Open a PR with your first test and implementation, discuss your approach so I can offer feedback and course correct
+- This is of course open-source but I do have strong opinions on the content. The sooner you talk to me the better.
 
 ## Style guide
 
