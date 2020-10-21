@@ -452,7 +452,7 @@ func TestUpdate(t *testing.T) {
 }
 ```
 
-`Update` 与 `Create` 密切相关，这是下一个需要我们实现的方法。
+`Update` 与 `Add` 密切相关，这是下一个需要我们实现的方法。
 
 ## 尝试运行测试
 
@@ -476,7 +476,7 @@ dictionary_test.go:55: got 'this is just a test' want 'new definition'
 
 ## 编写足够的代码使测试通过
 
-当我们用 `Create` 解决问题时就明白了如何处理这个问题。所以让我们实现一个与 `Create` 非常相似的方法。
+当我们用 `Add` 解决问题时就明白了如何处理这个问题。所以让我们实现一个与 `Add` 非常相似的方法。
 
 ```go
 func (d Dictionary) Update(word, definition string) {
@@ -484,7 +484,7 @@ func (d Dictionary) Update(word, definition string) {
 }
 ```
 
-我们不需要对此进行重构，因为更改很简单。但是，我们现在遇到与 `Create` 相同的问题。如果我们传入一个新单词，`Update` 会将它添加到字典中。
+我们不需要对此进行重构，因为更改很简单。但是，我们现在遇到与 `Add` 相同的问题。如果我们传入一个新单词，`Update` 会将它添加到字典中。
 
 ## 首先编写测试
 
