@@ -626,7 +626,7 @@ func (d Dictionary) Delete(word string) {
 
 Go 的 map 有一个内置函数 `delete`。它需要两个参数。第一个是这个 map，第二个是要删除的键。
 
-`delete` 函数不返回任何内容，我们基于相同的概念构建 `Delete` 方法。由于删除一个不存在的值是没有影响的，与我们的 `Update` 和 `Create` 方法不同，我们不需要用错误复杂化 API。
+`delete` 函数不返回任何内容，我们基于相同的概念构建 `Delete` 方法。由于删除一个不存在的值是没有影响的，与我们的 `Update` 和 `Add` 方法不同，我们不需要用错误复杂化 API。
 
 ## 总结
 
