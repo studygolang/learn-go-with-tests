@@ -50,23 +50,17 @@ func TestCheckWebsites(t *testing.T) {
         "waat://furhurterwe.geds",
     }
 
-    actualResults := CheckWebsites(mockWebsiteChecker, websites)
+    want := map[string]bool{
+		"http://google.com":          true,
+		"http://blog.gypsydave5.com": true,
+		"waat://furhurterwe.geds":    false,
+	}
 
-    want := len(websites)
-    got := len(actualResults)
-    if want != got {
-        t.Fatalf("Wanted %v, got %v", want, got)
-    }
+	got := CheckWebsites(mockWebsiteChecker, websites)
 
-    expectedResults := map[string]bool{
-        "http://google.com":          true,
-        "http://blog.gypsydave5.com": true,
-        "waat://furhurterwe.geds":    false,
-    }
-
-    if !reflect.DeepEqual(expectedResults, actualResults) {
-        t.Fatalf("Wanted %v, got %v", expectedResults, actualResults)
-    }
+	if !reflect.DeepEqual(want, got) {
+		t.Fatalf("Wanted %v, got %v", want, got)
+	}
 }
 ```
 该功能在生产环境中被用于检查数百个网站。但是你的同事开始抱怨它速度很慢，所以他们请你帮忙为程序提速。
