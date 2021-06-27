@@ -109,6 +109,8 @@ Go 的另一个高质量特征是文档。通过运行 `godoc -http :8000`，可
 
 大多数标准库都有优秀的文档和示例。浏览 [http://localhost:8000/pkg/testing/](http://localhost:8000/pkg/testing/) 是非常值得的，去看一下有什么对你有价值的内容。
 
+如果你的 `godoc` 命令不起作用，那么也许你使用的是 Go 的较新版本（1.14或更高），[其中不再包括 `godoc` 命令](https://golang.org/doc/go1.14#godoc)。 你可以运行 `go get golang.org/x/tools/cmd/godoc` 以手动安装。
+
 ### Hello, YOU
 
 现在有了测试，就可以安全地迭代我们的软件了。

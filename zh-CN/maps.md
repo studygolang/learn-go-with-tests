@@ -292,11 +292,15 @@ var m map[string]string
 相反，你可以像我们上面那样初始化空 map，或使用 `make` 关键字创建 map：
 
 ```go
-dictionary = map[string]string{}
+dictionary := map[string]string{}
 
 // OR
 
-dictionary = make(map[string]string)
+dictionary := make(map[string]string)
+
+// OR
+
+var dictionary = make(map[string]string)
 ```
 
 这两种方法都可以创建一个空的 `hash map` 并指向 `dictionary`。这确保永远不会获得 `nil 指针异常`。
@@ -437,6 +441,8 @@ func (e DictionaryErr) Error() string {
 
 我们将错误声明为常量，这需要我们创建自己的 `DictionaryErr` 类型来实现 `error` 接口。你可以在 [Dave Cheney 的这篇优秀文章](https://dave.cheney.net/2016/04/07/constant-errors)中了解更多相关的细节。简而言之，它使错误更具可重用性和不可变性。
 
+下一步，让我们创建一个 `update` 函数用来更新字典中已存在单词（键）的定义（值）。
+
 ## 首先编写测试
 
 ```go
@@ -452,7 +458,7 @@ func TestUpdate(t *testing.T) {
 }
 ```
 
-`Update` 与 `Create` 密切相关，这是下一个需要我们实现的方法。
+`Update` 与 `Add` 密切相关，这是下一个需要我们实现的方法。
 
 ## 尝试运行测试
 
@@ -476,7 +482,7 @@ dictionary_test.go:55: got 'this is just a test' want 'new definition'
 
 ## 编写足够的代码使测试通过
 
-当我们用 `Create` 解决问题时就明白了如何处理这个问题。所以让我们实现一个与 `Create` 非常相似的方法。
+当我们用 `Add` 解决问题时就明白了如何处理这个问题。所以让我们实现一个与 `Add` 非常相似的方法。
 
 ```go
 func (d Dictionary) Update(word, definition string) {
@@ -484,7 +490,7 @@ func (d Dictionary) Update(word, definition string) {
 }
 ```
 
-我们不需要对此进行重构，因为更改很简单。但是，我们现在遇到与 `Create` 相同的问题。如果我们传入一个新单词，`Update` 会将它添加到字典中。
+我们不需要对此进行重构，因为更改很简单。但是，我们现在遇到与 `Add` 相同的问题。如果我们传入一个新单词，`Update` 会将它添加到字典中。
 
 ## 首先编写测试
 
@@ -626,7 +632,7 @@ func (d Dictionary) Delete(word string) {
 
 Go 的 map 有一个内置函数 `delete`。它需要两个参数。第一个是这个 map，第二个是要删除的键。
 
-`delete` 函数不返回任何内容，我们基于相同的概念构建 `Delete` 方法。由于删除一个不存在的值是没有影响的，与我们的 `Update` 和 `Create` 方法不同，我们不需要用错误复杂化 API。
+`delete` 函数不返回任何内容，我们基于相同的概念构建 `Delete` 方法。由于删除一个不存在的值是没有影响的，与我们的 `Update` 和 `Add` 方法不同，我们不需要用错误复杂化 API。
 
 ## 总结
 
